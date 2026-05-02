@@ -160,6 +160,7 @@ const toolName = computed(() => {
   font-size: 14px;
   line-height: 1.5;
   word-break: break-word;
+  max-width: 650px;
 }
 
 .ac-message__content--md :deep(p) { margin: 0 0 8px; }
