@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat Widget — Example</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    .subtitle { color: #64748b; margin-bottom: 40px; font-size: 16px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card h2 { font-size: 16px; font-weight: 600; margin: 0 0 16px; color: #374151; }
+    label { font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px; }
+    input, textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus { border-color: #2563eb; }
+    .row { display: flex; gap: 8px; margin-top: 8px; }
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    button:hover { background: #1d4ed8; }
+    button.secondary {
+      background: none;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+    button.secondary:hover { background: #f3f4f6; }
+    .status { font-size: 12px; color: #6b7280; margin-top: 8px; min-height: 18px; }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 13px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-Does7Rg3.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-PR69dLyr.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AI Chat Widget</h1>
+    <p class="subtitle">Developer test harness — the chat bubble is in the bottom-right corner ↘</p>
+
+    <div class="card">
+      <h2>🔑 Token Management</h2>
+      <label for="token-input">JWT / Bearer Token</label>
+      <div class="row">
+        <input id="token-input" type="text" placeholder="Paste your JWT here…" />
+        <button onclick="setToken()">Set Token</button>
+      </div>
+      <div class="status" id="token-status"></div>
+    </div>
+
+    <div class="card">
+      <h2>📨 Send a Message Programmatically</h2>
+      <label for="msg-input">Message text</label>
+      <div class="row">
+        <input id="msg-input" type="text" placeholder="Hello, what can you do?" value="Hello! What can you help me with?" />
+        <button onclick="sendMsg()">Send via postMessage</button>
+        <button class="secondary" onclick="sendDirect()">Send direct</button>
+      </div>
+      <div class="status" id="msg-status"></div>
+    </div>
+
+    <div class="card">
+      <h2>🪟 Widget Controls</h2>
+      <div class="row" style="margin-top:0">
+        <button onclick="window.AIChatWidget.open()">Open</button>
+        <button class="secondary" onclick="window.AIChatWidget.close()">Close</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Script Tag Integration</h2>
+      <pre>&lt;script
+  src="https://your-cdn.example.com/ai-chat-widget.js"
+  data-api-endpoint="https://api.example.com"
+  data-token="eyJhbGciOiJIUzI1NiJ9..."
+  data-welcome-message="Hi! How can I assist you?"
+&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <div class="card">
+      <h2>📡 postMessage API Reference</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#f8fafc">
+            <th style="text-align:left;padding:8px;border-bottom:1px solid #e2e8f0">Event type</th>
+            <th style="text-align:left;padding:8px;border-bottom:1px solid #e2e8f0">Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>AI_CHAT_SEND</code></td><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>{ type, message: string }</code></td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>AI_CHAT_SET_TOKEN</code></td><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>{ type, token: string }</code></td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>AI_CHAT_OPEN</code></td><td style="padding:8px;border-bottom:1px solid #f1f5f9"><code>{ type }</code></td></tr>
+          <tr><td style="padding:8px"><code>AI_CHAT_CLOSE</code></td><td style="padding:8px"><code>{ type }</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <script>
+    function setToken() {
+      const val = document.getElementById('token-input').value.trim()
+      if (!val) return
+      window.AIChatWidget.setToken(val)
+      document.getElementById('token-status').textContent = '✓ Token set'
+      setTimeout(() => { document.getElementById('token-status').textContent = '' }, 3000)
+    }
+
+    function sendMsg() {
+      const val = document.getElementById('msg-input').value.trim()
+      if (!val) return
+      window.postMessage({ type: 'AI_CHAT_SEND', message: val }, '*')
+      document.getElementById('msg-status').textContent = '✓ postMessage sent'
+      setTimeout(() => { document.getElementById('msg-status').textContent = '' }, 3000)
+    }
+
+    function sendDirect() {
+      const val = document.getElementById('msg-input').value.trim()
+      if (!val) return
+      window.AIChatWidget.sendMessage(val)
+      document.getElementById('msg-status').textContent = '✓ Sent via AIChatWidget.sendMessage()'
+      setTimeout(() => { document.getElementById('msg-status').textContent = '' }, 3000)
+    }
+  </script>
+</body>
+</html>
