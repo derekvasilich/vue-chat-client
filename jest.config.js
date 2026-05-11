@@ -1,6 +1,5 @@
-import type { Config } from 'jest'
-
-const config: Config = {
+/** @type {import('jest').Config} */
+module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': 'babel-jest',
@@ -11,13 +10,10 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['**/tests/**/*.test.ts'],
-  setupFilesAfterEach: [],
-  setupFiles: ['<rootDir>/tests/setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   globals: {
     'vue-jest': {
       tsConfig: 'tsconfig.json',
     },
   },
 }
-
-export default config
