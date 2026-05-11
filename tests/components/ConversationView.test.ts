@@ -27,6 +27,8 @@ const mockConv: ConversationResponse = {
   updated_at: new Date().toISOString(),
 }
 
+Element.prototype.scrollTo = jest.fn();
+
 describe('ConversationView', () => {
   beforeEach(() => {
     messages.value = []
