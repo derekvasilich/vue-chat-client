@@ -1,5 +1,13 @@
-// Global fetch mock
-global.fetch = jest.fn()
+// Global fetch mock — default to an empty 200 response so components that
+// fetch on mount don't blow up. Individual tests can override via mockResolvedValueOnce.
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  } as Response)
+)
 
 // localStorage mock
 const localStorageMock = (() => {
