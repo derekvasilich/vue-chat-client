@@ -168,6 +168,9 @@ Tests use Jest + `@vue/test-utils`. Each component has a test file under `tests/
 
 ---
 
+## Security Overview
+Integrates with AWS Cognito User Pools for secure OAuth2 authentication.
+
 ## Architecture Overview
 
 ### State (`useChatStore.ts`)
