@@ -3,7 +3,12 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { api } from '../composables/useApi'
 import { useModels } from '../composables/useModels'
 import { currentConversation, currentView } from '../composables/useChatStore'
-import type { ConversationConfigResponse, ConversationConfigUpdate } from '../types/api'
+import {
+  AVAILABLE_TOOLS,
+  type ConversationConfigResponse,
+  type ConversationConfigUpdate,
+  type SpecSourceResponse,
+} from '../types/api'
 
 const { models, providers, modelsForProvider, load: loadModels } = useModels()
 
@@ -12,12 +17,17 @@ const isLoading = ref(false)
 const isSaving = ref(false)
 const error = ref<string | null>(null)
 const validationErrors = ref<Record<string, string>>({})
+const specSources = ref<SpecSourceResponse[]>([])
 
 // Form state
 const systemPrompt = ref('')
 const selectedProvider = ref('')
 const selectedModel = ref('')
 const maxHistory = ref<number | null>(null)
+const enabledTools = ref<string[]>([])
+const enabledSpecs = ref<string[]>([])
+
+const availableTools = AVAILABLE_TOOLS
 
 const filteredModels = computed(() => {
   if (!selectedProvider.value) return []
@@ -42,12 +52,22 @@ onMounted(async () => {
     selectedProvider.value = cfg.provider
     selectedModel.value = cfg.model
     maxHistory.value = cfg.max_history_messages
+    enabledTools.value = [...(cfg.enabled_tools ?? [])]
+    enabledSpecs.value = [...(cfg.enabled_specs ?? [])]
+    try {
+      const specs = await api.listSpecSources()
+      specSources.value = specs.items
+    } catch {
+      specSources.value = []
+    }
   } catch (e: any) {
     error.value = e.message
   } finally {
     isLoading.value = false
   }
 })
+
+const openapiToolEnabled = computed(() => enabledTools.value.includes('openapi_discovery'))
 
 function validate(): boolean {
   validationErrors.value = {}
@@ -67,6 +87,8 @@ async function save() {
       provider: selectedProvider.value || null,
       model: selectedModel.value || null,
       max_history_messages: maxHistory.value,
+      enabled_tools: [...enabledTools.value],
+      enabled_specs: openapiToolEnabled.value ? [...enabledSpecs.value] : [],
     }
     await api.updateConfig(currentConversation.value.id, update)
     currentView.value = 'chat'
@@ -128,14 +150,43 @@ function cancel() {
         </span>
       </div>
 
-      <div v-if="config?.enabled_tools?.length" class="ac-settings__field">
+      <div class="ac-settings__field">
         <label class="ac-settings__label">Enabled Tools</label>
-        <div class="ac-settings__chips">
-          <span
-            v-for="tool in config.enabled_tools"
-            :key="tool"
-            class="ac-settings__chip"
-          >{{ tool }}</span>
+        <div class="ac-settings__checklist">
+          <label v-for="tool in availableTools" :key="tool" class="ac-settings__check">
+            <input
+              type="checkbox"
+              :value="tool"
+              v-model="enabledTools"
+            />
+            <span>{{ tool }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div v-if="openapiToolEnabled" class="ac-settings__field">
+        <label class="ac-settings__label">Enabled Specs</label>
+        <div v-if="!specSources.length" class="ac-settings__empty">
+          No spec sources registered.
+        </div>
+        <div v-else class="ac-settings__checklist">
+          <label
+            v-for="spec in specSources"
+            :key="spec.id"
+            class="ac-settings__check"
+          >
+            <input
+              type="checkbox"
+              :value="spec.id"
+              v-model="enabledSpecs"
+            />
+            <span>
+              <strong>{{ spec.id }}</strong>
+              <span v-if="spec.description" class="ac-settings__check-desc">
+                — {{ spec.description }}
+              </span>
+            </span>
+          </label>
         </div>
       </div>
 
@@ -238,6 +289,36 @@ function cancel() {
   border-radius: 999px;
   padding: 3px 10px;
   font-size: 12px;
+}
+
+.ac-settings__checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ac-settings__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.ac-settings__check input {
+  margin-top: 3px;
+}
+
+.ac-settings__check-desc {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.ac-settings__empty {
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
 }
 
 .ac-settings__actions {

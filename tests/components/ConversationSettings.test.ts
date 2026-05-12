@@ -23,6 +23,7 @@ const mockConfig = {
   model: 'gpt-4',
   max_history_messages: 50,
   enabled_tools: ['web_search'],
+  enabled_specs: [],
 }
 
 const mockModels = [
@@ -31,19 +32,39 @@ const mockModels = [
   { id: 'claude-3', provider: 'anthropic', name: 'Claude 3' },
 ]
 
+const mockSpecs = {
+  items: [
+    {
+      id: 'petstore',
+      url: 'https://example.com/petstore.json',
+      description: 'Pets',
+      auth: { type: 'none' },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: 'weather',
+      url: 'https://example.com/weather.json',
+      description: 'Weather',
+      auth: { type: 'none' },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ],
+}
+
+function queueDefaultFetches() {
+  ;(global.fetch as jest.Mock)
+    .mockResolvedValueOnce({ ok: true, json: async () => mockModels })
+    .mockResolvedValueOnce({ ok: true, json: async () => mockConfig })
+    .mockResolvedValueOnce({ ok: true, json: async () => mockSpecs })
+}
+
 describe('ConversationSettings', () => {
   beforeEach(() => {
     currentConversation.value = mockConv
     currentView.value = 'settings'
-    ;(global.fetch as jest.Mock)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockModels,
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockConfig,
-      })
+    queueDefaultFetches()
   })
 
   it('loads and displays config', async () => {
@@ -53,10 +74,63 @@ describe('ConversationSettings', () => {
     expect((textarea.element as HTMLTextAreaElement).value).toBe('Be helpful')
   })
 
-  it('shows tool chips', async () => {
+  it('renders tool checkboxes pre-selected from config', async () => {
     const wrapper = mount(ConversationSettings)
     await flushPromises()
-    expect(wrapper.find('.ac-settings__chip').text()).toBe('web_search')
+    const checks = wrapper.findAll('.ac-settings__check input[type="checkbox"]')
+    const checked = checks
+      .filter((c) => (c.element as HTMLInputElement).checked)
+      .map((c) => (c.element as HTMLInputElement).value)
+    expect(checked).toContain('web_search')
+  })
+
+  it('shows spec list only when openapi_discovery is enabled', async () => {
+    const wrapper = mount(ConversationSettings)
+    await flushPromises()
+    // openapi_discovery not enabled in mockConfig, so specs are hidden
+    expect(wrapper.html()).not.toContain('Enabled Specs')
+
+    const toolBoxes = wrapper.findAll('.ac-settings__check input[type="checkbox"]')
+    const openapiBox = toolBoxes.find(
+      (b) => (b.element as HTMLInputElement).value === 'openapi_discovery'
+    )!
+    await openapiBox.setValue(true)
+    expect(wrapper.html()).toContain('Enabled Specs')
+    expect(wrapper.html()).toContain('petstore')
+    expect(wrapper.html()).toContain('weather')
+  })
+
+  it('sends enabled_tools and enabled_specs on save', async () => {
+    const wrapper = mount(ConversationSettings)
+    await flushPromises()
+
+    const toolBoxes = wrapper.findAll('.ac-settings__check input[type="checkbox"]')
+    const openapiBox = toolBoxes.find(
+      (b) => (b.element as HTMLInputElement).value === 'openapi_discovery'
+    )!
+    await openapiBox.setValue(true)
+
+    const specBoxes = wrapper.findAll('.ac-settings__check input[type="checkbox"]')
+    const petstoreBox = specBoxes.find(
+      (b) => (b.element as HTMLInputElement).value === 'petstore'
+    )!
+    await petstoreBox.setValue(true)
+
+    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockConfig,
+    })
+
+    await wrapper.find('.ac-btn--primary').trigger('click')
+    await flushPromises()
+
+    const patchCall = (global.fetch as jest.Mock).mock.calls.find(
+      ([, opts]) => opts?.method === 'PATCH'
+    )
+    expect(patchCall).toBeDefined()
+    const body = JSON.parse(patchCall![1].body)
+    expect(body.enabled_tools).toEqual(expect.arrayContaining(['web_search', 'openapi_discovery']))
+    expect(body.enabled_specs).toEqual(['petstore'])
   })
 
   it('cancel returns to chat view', async () => {
@@ -67,9 +141,6 @@ describe('ConversationSettings', () => {
   })
 
   it('shows validation error for out-of-range max history', async () => {
-    ;(global.fetch as jest.Mock)
-      .mockResolvedValueOnce({ ok: true, json: async () => mockModels })
-      .mockResolvedValueOnce({ ok: true, json: async () => mockConfig })
     const wrapper = mount(ConversationSettings)
     await flushPromises()
     const input = wrapper.find('.ac-settings__input')

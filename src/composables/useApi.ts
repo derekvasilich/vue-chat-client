@@ -8,6 +8,9 @@ import type {
   ConversationConfigResponse,
   ConversationConfigUpdate,
   ModelResponse,
+  SpecSourceCreate,
+  SpecSourceResponse,
+  SpecSourceListResponse,
 } from '../types/api'
 
 let _endpoint = import.meta.env.VITE_AGENT_API_ENDPOINT || 'http://localhost:8080'
@@ -105,6 +108,25 @@ export const api = {
 
   listModels() {
     return request<ModelResponse[]>('/v1/models')
+  },
+
+  listSpecSources() {
+    return request<SpecSourceListResponse>('/v1/spec-sources')
+  },
+
+  getSpecSource(id: string) {
+    return request<SpecSourceResponse>(`/v1/spec-sources/${id}`)
+  },
+
+  createSpecSource(data: SpecSourceCreate) {
+    return request<SpecSourceResponse>('/v1/spec-sources', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  deleteSpecSource(id: string) {
+    return request<void>(`/v1/spec-sources/${id}`, { method: 'DELETE' })
   },
 
   async *streamMessage(

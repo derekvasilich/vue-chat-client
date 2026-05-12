@@ -63,6 +63,7 @@ export interface ConversationConfigResponse {
   model: string
   max_history_messages: number | null
   enabled_tools: string[]
+  enabled_specs: string[]
 }
 
 export interface ConversationConfigUpdate {
@@ -71,13 +72,81 @@ export interface ConversationConfigUpdate {
   model?: string | null
   max_history_messages?: number | null
   enabled_tools?: string[] | null
+  enabled_specs?: string[] | null
 }
+
+export const AVAILABLE_TOOLS = ['calculator', 'web_search', 'openapi_discovery'] as const
+export type AvailableTool = (typeof AVAILABLE_TOOLS)[number]
 
 export interface ModelResponse {
   id: string
   provider: string
   name: string
   description?: string
+}
+
+export interface AuthNone {
+  type: 'none'
+}
+
+export interface AuthPassthroughJWT {
+  type: 'passthrough_jwt'
+  header_name?: string | null
+}
+
+export interface AuthBearerEnv {
+  type: 'bearer_env'
+  env_var: string
+}
+
+export interface AuthApiKeyEnv {
+  type: 'api_key_env'
+  env_var: string
+  header: string
+}
+
+export interface AuthBasicEnv {
+  type: 'basic_env'
+  username_env: string
+  password_env: string
+}
+
+export interface AuthStatic {
+  type: 'static'
+  headers: Record<string, string>
+}
+
+export type SpecAuth =
+  | AuthNone
+  | AuthPassthroughJWT
+  | AuthBearerEnv
+  | AuthApiKeyEnv
+  | AuthBasicEnv
+  | AuthStatic
+
+export type SpecAuthType = SpecAuth['type']
+
+export interface SpecSourceCreate {
+  id: string
+  url: string
+  description: string
+  auth: SpecAuth
+}
+
+export interface SpecSourceResponse {
+  id: string
+  url: string
+  description: string
+  auth: SpecAuth
+  cache_etag?: string | null
+  last_fetched_at?: string | null
+  operation_count?: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface SpecSourceListResponse {
+  items: SpecSourceResponse[]
 }
 
 export interface WidgetConfig {
