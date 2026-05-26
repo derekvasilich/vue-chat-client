@@ -20,7 +20,7 @@ const showScrollBtn = ref(false)
 const isLoadingOlder = ref(false)
 const atBottom = ref(true)
 
-const MAX_CHARS = 1000
+const MAX_CHARS = 5000
 const SHOW_COUNT_THRESHOLD = 800
 
 const charCount = computed(() => text.value.length)
