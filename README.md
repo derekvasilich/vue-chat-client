@@ -208,3 +208,100 @@ ChatWidget (Global Canvas Root)
   ├── ConversationHistory
   └── ConversationSettings
 ```
+
+## Frontend Component Topology & Reactive Data Flow
+
+The architecture decouples the structural layout layer (Vue VNodes) from the persistent transport engine (`useApi`) and the global reactive data layer (`useChatStore`), ensuring strict unidirectional data flow and non-blocking stream parsing.
+
+```mermaid
+flowchart TD
+    %% Ingress & Host Integration Layer
+    subgraph Ingress["Host Ingress & Event Bridge"]
+        ScriptTag[HTML Script Tag<br/>data-* Attributes]
+        PostMsg[window.postMessage<br/>Cross-Origin Broker]
+        JS_API[window.AIChatWidget API<br/>Runtime JS Execution]
+    end
+
+    %% Global Reactive Singleton State
+    subgraph GlobalState["Global Core Storage Layer (useChatStore.ts)"]
+        State[(Reactive State Ref<br/>conversations · messages · active_id)]
+        LocalStorage[(localStorage<br/>ac_conversation_id)]
+    end
+
+    %% Abstract Transport Layer
+    subgraph Transport["Network Transport Engine (useApi.ts)"]
+        FetchClient[Typed Axios/Fetch client<br/>Authorization: Bearer Token Injection]
+        StreamClient[ReadableStream + TextDecoder<br/>SSE Server-Sent Events Parser]
+    end
+
+    %% UI Component Presentation Hierarchies
+    subgraph UICanvas["UI Presentation Layer (Vue 3 Custom Web Component)"]
+        WidgetRoot[ChatWidget.vue<br/>Global Canvas Root / Mount Lifecycle]
+        Bubble[ChatBubble.vue<br/>Fixed Viewport Pinned Trigger]
+        Dialog[ChatDialog.vue<br/>Slide-Up Presentation Interface]
+        
+        subgraph Views["Contextual Dialog Views"]
+            History[ConversationHistory.vue<br/>Cursor-Paginated Indices]
+            Settings[ConversationSettings.vue<br/>Model Preferences & Specs]
+            CView[ConversationView.vue<br/>Active Thread Controller]
+        end
+
+        subgraph Bubbles["Thread Item Renderers"]
+            MsgBubble[MessageBubble.vue<br/>WCAG Compliant Markdown Renderer]
+            Indicator[TypingIndicator.vue<br/>Asynchronous Processing Pulse]
+            Input[ChatInput.vue<br/>Inline Submission Engine]
+        end
+    end
+
+    subgraph Backend["Upstream Gateway Services"]
+        Gateway[FastAPI Serverless Ingress]
+    end
+
+    %% Ingress to State & Control Routing
+    ScriptTag -->|Hydrate Initial State| WidgetRoot
+    PostMsg -->|Message Interception Event Listener| WidgetRoot
+    JS_API -->|Direct Structural Call Execution| WidgetRoot
+    
+    WidgetRoot <-->|Mutate Configuration / Lifecycle| State
+    WidgetRoot -->|Render Anchors| Bubble
+    WidgetRoot -->|Render Framework| Dialog
+    
+    %% Dialog Structural Compilations
+    Dialog --> History
+    Dialog --> Settings
+    Dialog --> CView
+
+    %% Thread Processing Cycles
+    CView -->|v-for Array Loop Array Mapping| MsgBubble
+    CView -->|Conditional Visibility v-if| Indicator
+    CView --> Input
+
+    %% Unidirectional Data Engine Flow loops
+    Input -->|1. Dispatch Intent Content| State
+    State -->|2. Trigger Optimistic UI Update| MsgBubble
+    State -->|3. Mount Loader Frame| Indicator
+    
+    %% Network Orchestration Loop
+    Input -->|4. Invoke Asynchronous Transport| FetchClient
+    FetchClient -->|5. HTTPS POST /messages| Gateway
+    Gateway -->|6. Yield Chunk Streams HTTP 200| StreamClient
+    
+    StreamClient -->|7. Step-by-Step Chunk Processing| State
+    State -->|8. Mutate Reactive Pointers| MsgBubble
+    StreamClient -->|9. Connection Closure Signal| Indicator
+
+    %% State Synchronization
+    State <--> LocalStorage
+
+    %% Styling and Accent Architecture
+    classDef stateNode fill:#fafafa,stroke:#1e3a8a,stroke-width:2px;
+    classDef transportNode fill:#cfd8dc,stroke:#37474f,stroke-width:2px;
+    classDef ingressNode fill:#fffde7,stroke:#fbc02d,stroke-width:2px;
+    
+    class State stateNode;
+    class FetchClient,StreamClient transportNode;
+    class ScriptTag,PostMsg,JS_API ingressNode;
+    
+    style UICanvas fill:#f9f9f9,stroke:#2e7d32,stroke-width:2px,stroke-dasharray: 5 5;
+    style GlobalState fill:#f0f4c3,stroke:#9e9d24,stroke-width:2px;
+```
