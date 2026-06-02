@@ -1,6 +1,6 @@
 # Vue AI Chat Widget
 
-A nearly production-ready, embeddable Vue 3 AI chat widget. Works as a standalone dev app and as a `<script>` tag widget in any host page.
+A production-ready, embeddable Vue 3 AI chat widget. Works as a standalone dev app and as a `<script>` tag widget in any host page.
 
 ---
 

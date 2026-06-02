@@ -10,7 +10,7 @@ import {
   welcomeMessage,
 } from '../composables/useChatStore'
 import { useConversation } from '../composables/useConversation'
-import { api } from '@/composables/useApi.ts'
+import { api } from '../composables/useApi'
 
 const { sendMessage, loadOlderMessages, hasMore } = useConversation()
 
