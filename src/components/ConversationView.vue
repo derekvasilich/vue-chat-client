@@ -137,13 +137,14 @@ function triggerFileBrowser() {
  * Automatically runs once the user selects files and hits "Open"
  */
 async function onFileSelected(event: Event) {
-  const selectedFiles: File[] = Array.from(event.target?.files || []);
+  const target = event.target as HTMLInputElement
+  const selectedFiles: File[] = Array.from(target?.files || []);
   if (!selectedFiles.length) return;
 
   const file = selectedFiles[0]; // Assuming single file upload; adjust if multiple files are allowed
   const fileMessage = {
     id: `file-${Date.now()}`,
-    conversation_id: currentConversation?.id ?? '',
+    conversation_id: currentConversation.value?.id ?? '',
     role: 'user',
     content: `📎 ${file.name}`,
     tool_calls: null,
@@ -171,7 +172,7 @@ async function onFileSelected(event: Event) {
   messages.value.push(fileMessage)
 
   // Clear the input value so the user can upload the exact same file name again later if needed
-  event.target.value = '';
+  target.value = '';
 }
 </script>
 
