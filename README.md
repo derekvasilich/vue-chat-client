@@ -17,8 +17,6 @@ An enterprise-ready, production-grade, highly performant Vue 3 conversational wi
 *   **WCAG 2.1 Level AA Accessibility Core:** Built with semantic ARIA markup patterns, keyboard trap management, and accessibility-first layouts optimized to pass rigid regulatory bank compliance audits.
 *   **Sub-Second SSE Stream Parsing:** Leverages a lean, reactive `ReadableStream` composition layer to intercept, decode, and render Server-Sent Events (SSE) tokens instantly, with graceful fallback to non-streaming REST payloads.
 
----
-
 ## 🚀 Environment Initialization & Compilation
 
 To stand up a localized virtual development environment and launch the interactive development sandbox:
