@@ -24,8 +24,6 @@ npm run dev
 
 The server initializes local hosting on [http://localhost:5173](http://localhost:5173). The interactive chat bubble mounts pinned to the bottom-right viewport boundary.
 
----
-
 ## 📦 Distributed CDN Script-Tag Integration
 
 Inject a single, compiled script element to mount the conversational interface inside any host property on `DOMContentLoaded`:
@@ -47,8 +45,6 @@ Inject a single, compiled script element to mount the conversational interface i
 | `data-api-endpoint` | **Mandatory** | Absolute base URI hosting the upstream gateway API layers. |
 | `data-token` | Optional | Cryptographically signed JWT bearer token supporting session authority. |
 | `data-welcome-message` | Optional | Fallback empty-state system response string (Default: *Hello! How can I help you today?*). |
-
----
 
 ## 🔐 Cryptographic Token Injection Lifecycles
 
@@ -80,8 +76,6 @@ async function refreshAndFederateToken() {
 // Trigger refreshAndFederateToken() within standard authorization cron windows
 ```
 
----
-
 ## ⚙️ Core JavaScript Runtime Control API
 
 Programmatically govern widget state transformations without relying on DOM elements:
@@ -99,8 +93,6 @@ window.AIChatWidget.open()                         // Trigger layout entry trans
 window.AIChatWidget.close()                        // Trigger layout exit transitions
 window.AIChatWidget.sendMessage('Query active ledgers.') // Programmatically dispatch intent
 ```
-
----
 
 ## 📡 Cross-Origin PostMessage Event System
 
@@ -122,15 +114,12 @@ window.postMessage({ type: 'AI_CHAT_CLOSE' }, '*')
 
 ### PostMessage Event Schema Reference
 
-
 | System Event Identifier | Required Data Structure Payload |
 |:---|:---|
 | `AI_CHAT_SEND` | `message: string` (The target query payload) |
 | `AI_CHAT_SET_TOKEN` | `token: string` (The rotated cryptographic JWT) |
 | `AI_CHAT_OPEN` | *None (State change only)* |
 | `AI_CHAT_CLOSE` | *None (State change only)* |
-
----
 
 ## 🎨 Enterprise Theme Customization (CSS Tokens)
 
@@ -153,8 +142,6 @@ Override any core layout variables by redefining CSS custom properties at the `:
 }
 ```
 
----
-
 ## 🏗️ Production Compilation Pipelines
 
 To compile raw single-file components into highly optimized production targets:
@@ -176,8 +163,6 @@ To bypass sample app assembly and compile *only* the zero-dependency widget:
 npm run build:widget
 ```
 
----
-
 ## 🧪 Test Automation Framework
 
 To launch the unit and component regression testing suites:
@@ -187,8 +172,6 @@ npm test
 ```
 
 *Note: Tests run via Jest leveraging `@vue/test-utils` processing. Component test blocks map to sequential files nested cleanly within `tests/components/` boundaries.*
-
----
 
 ## 🧩 Architectural Engineering Specifications
 
