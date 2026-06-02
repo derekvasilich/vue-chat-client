@@ -196,6 +196,8 @@ Strongly typed ingestion layer routing outbound payloads. All transport methods 
 5. Network Interception  ➔ Smooth Automatic Fallback to Standard REST POST Layer if Stream Drops
 
 ### UI Component Hierarchy Tree
+
+```
 ChatWidget (Global Canvas Root)
 ├── ChatBubble          (Viewport fixed action component)
 └── ChatDialog          (Slide-up presentation interface container)
@@ -205,4 +207,4 @@ ChatWidget (Global Canvas Root)
   │   └── [ChatInput — Contextual inline submission engine]
   ├── ConversationHistory
   └── ConversationSettings
-
+```
