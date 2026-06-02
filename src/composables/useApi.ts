@@ -11,6 +11,7 @@ import type {
   SpecSourceCreate,
   SpecSourceResponse,
   SpecSourceListResponse,
+  DocumentUploadResponse,
 } from '../types/api'
 
 let _endpoint = import.meta.env.VITE_AGENT_API_ENDPOINT || 'http://localhost:8080'
@@ -127,6 +128,20 @@ export const api = {
 
   deleteSpecSource(id: string) {
     return request<void>(`/v1/spec-sources/${id}`, { method: 'DELETE' })
+  },
+
+  refreshSpecSource(id: string) {
+    return request<void>(`/v1/spec-sources/${id}/refresh`, { method: 'POST' })
+  },
+
+  getUploadUrl(file_name: string, file_type: string) {
+    return request<DocumentUploadResponse>(
+      `/v1/documents/upload-url`,
+      { 
+        method: 'POST', 
+        body: JSON.stringify({ file_name, file_type }),
+      }
+    )
   },
 
   async *streamMessage(

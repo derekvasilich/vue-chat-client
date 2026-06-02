@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { api } from '../src/composables/useApi'
+import { api } from '../../src/composables/useApi'
 import type {
   SpecSourceResponse,
   SpecAuth,
   SpecAuthType,
   SpecSourceCreate,
-} from '../src/types/api'
+} from '../../src/types/api'
 
 const sources = ref<SpecSourceResponse[]>([])
 const isLoading = ref(false)
@@ -195,6 +195,14 @@ async function remove(spec: SpecSourceResponse) {
   }
 }
 
+async function refresh(spec: SpecSourceResponse) {
+  try {
+    await api.refreshSpecSource(spec.id)
+  } catch (e: any) {
+    error.value = e.message
+  }
+}
+
 function formatDate(iso?: string | null): string {
   if (!iso) return '—'
   try {
@@ -254,8 +262,11 @@ function authSummary(auth: SpecAuth): string {
             <td>{{ s.operation_count ?? '—' }}</td>
             <td>{{ formatDate(s.last_fetched_at) }}</td>
             <td>
+              <button class="secondary spec-mgr__delete" @click="refresh(s)">
+                🚀
+              </button>
               <button class="secondary spec-mgr__delete" @click="remove(s)">
-                Delete
+                🚫
               </button>
             </td>
           </tr>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ChatWidget from '../src/ChatWidget.vue'
-import SpecSourceManager from './SpecSourceManager.vue'
+import SpecSourceManager from './components/SpecSourceManager.vue'
 import { ref, toRefs } from 'vue';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 

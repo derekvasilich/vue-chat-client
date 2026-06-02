@@ -154,3 +154,5 @@ export interface WidgetConfig {
   token: string
   welcomeMessage: string
 }
+
+export interface DocumentUploadResponse { upload_url: string; object_key: string }
