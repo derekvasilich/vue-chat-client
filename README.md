@@ -2,6 +2,14 @@
 
 An enterprise-ready, production-grade, highly performant Vue 3 conversational widget. Explicitly engineered to operate natively as a standalone Single Page Application (SPA) development sandbox or compile into a zero-dependency, self-contained IIFE asset bundle for distributed `<script>` tag embedding across decoupled corporate properties.
 
+---
+
+### 🌐 System Components & Repositories
+*   **Vue 3 Interactive UI Chat Widget (Current Repository)**
+*   **Secure AWS Cloud & Python Backend Gateway:** [Go to Backend Repository ➔](https://github.com/derekvasilich/lambda-chat-agent)
+
+---
+
 ## 🛠️ Core Engineering & Optimization Features
 
 *   **Zero-Dependency IIFE Distribution:** Compiles down to an isolated, self-contained IIFE bundle, avoiding host-page namespace conflicts or library collisions.
