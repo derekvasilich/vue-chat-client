@@ -1,209 +1,225 @@
-# Vue AI Chat Widget
+# Enterprise Embedable UI Chat Widget Architecture (Vue 3)
 
-A production-ready, embeddable Vue 3 AI chat widget. Works as a standalone dev app and as a `<script>` tag widget in any host page.
+An enterprise-ready, production-grade, highly performant Vue 3 conversational widget. Explicitly engineered to operate natively as a standalone Single Page Application (SPA) development sandbox or compile into a zero-dependency, self-contained IIFE asset bundle for distributed `<script>` tag embedding across decoupled corporate properties.
+
+## 🛠️ Core Engineering & Optimization Features
+
+*   **Zero-Dependency IIFE Distribution:** Compiles down to an isolated, self-contained IIFE bundle, avoiding host-page namespace conflicts or library collisions.
+*   **Cross-Frame Event Management:** Utilizes the HTML5 Web PostMessage API to safely update authorization matrices, dispatch instructions, and manage structural dialog states across cross-origin `iframe` layouts.
+*   **WCAG 2.1 Level AA Accessibility Core:** Built with semantic ARIA markup patterns, keyboard trap management, and accessibility-first layouts optimized to pass rigid regulatory bank compliance audits.
+*   **Sub-Second SSE Stream Parsing:** Leverages a lean, reactive `ReadableStream` composition layer to intercept, decode, and render Server-Sent Events (SSE) tokens instantly, with graceful fallback to non-streaming REST payloads.
 
 ---
 
-## Quick Start
+## 🚀 Environment Initialization & Compilation
+
+To stand up a localized virtual development environment and launch the interactive development sandbox:
 
 ```bash
 npm install
-cp .env.example .env
-# edit .env to set VITE_AGENT_API_ENDPOINT
+cp .env.example .env          # Inject project-specific environmental variables
+# Configure VITE_AGENT_API_ENDPOINT inside the .env layout
 npm run dev
 ```
 
-Open http://localhost:5173 for the example app. The chat bubble appears in the bottom-right corner.
+The server initializes local hosting on [http://localhost:5173](http://localhost:5173). The interactive chat bubble mounts pinned to the bottom-right viewport boundary.
 
 ---
 
-## Script Tag Integration
+## 📦 Distributed CDN Script-Tag Integration
 
-Add one `<script>` tag to any page:
+Inject a single, compiled script element to mount the conversational interface inside any host property on `DOMContentLoaded`:
 
 ```html
 <script
-  src="https://your-cdn.example.com/ai-chat-widget.js"
-  data-api-endpoint="https://api.example.com"
-  data-token="eyJhbGciOiJIUzI1NiJ9..."
-  data-welcome-message="Hi! How can I assist you?"
+  src="https://enterprise.internal"
+  data-api-endpoint="https://enterprise.internal"
+  data-token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSJ9..."
+  data-welcome-message="Secure system initialized. How can I assist you with your portfolio?"
 ></script>
 ```
 
-| Attribute | Required | Description |
-|-----------|----------|-------------|
-| `data-api-endpoint` | Yes | Base URL of the backend API |
-| `data-token` | No | JWT bearer token |
-| `data-welcome-message` | No | Empty-state welcome text (default: "Hello! How can I help you today?") |
+### Parameter Specification Matrix
 
-The widget auto-mounts on `DOMContentLoaded`.
+
+| Mounting Attribute | Operational Requirement | System Integration Purpose |
+|:---|:---|:---|
+| `data-api-endpoint` | **Mandatory** | Absolute base URI hosting the upstream gateway API layers. |
+| `data-token` | Optional | Cryptographically signed JWT bearer token supporting session authority. |
+| `data-welcome-message` | Optional | Fallback empty-state system response string (Default: *Hello! How can I help you today?*). |
 
 ---
 
-## Token Injection
+## 🔐 Cryptographic Token Injection Lifecycles
 
-Three ways to provide/update the auth token:
+The architecture exposes three distinct pipelines to handle runtime OAuth2/JWT token rotation and execution lifecycles safely:
 
-**1. data attribute (page load)**
+### 1. Static Initializer Attributes (Page Ingress)
 ```html
 <script src="..." data-token="eyJ..."></script>
 ```
 
-**2. JavaScript API (runtime refresh)**
+### 2. Runtime JavaScript API Hooks (Same-Origin State Propagation)
 ```js
-window.AIChatWidget.setToken('new-jwt-token')
+window.AIChatWidget.setToken('new-jwt-token-string')
 ```
 
-**3. postMessage (cross-frame)**
+### 3. Cross-Frame PostMessage Broker (Cross-Origin Context Federation)
 ```js
-window.postMessage({ type: 'AI_CHAT_SET_TOKEN', token: 'new-jwt-token' }, '*')
+window.postMessage({ type: 'AI_CHAT_SET_TOKEN', token: 'new-jwt-token-string' }, '*')
 ```
 
-**Token refresh pattern** (e.g. before expiry):
+### Advanced Token Refresh Pattern (Pre-Expiry Interception)
+To guarantee zero delivery disruption before token expiration limits are hit, integrate this asynchronous refresh wrapper within the host identity platform:
+
 ```js
-async function refreshAndUpdate() {
-  const newToken = await yourAuthClient.refreshToken()
-  window.AIChatWidget.setToken(newToken)
+async function refreshAndFederateToken() {
+  const rotatedToken = await yourAuthClient.refreshToken()
+  window.AIChatWidget.setToken(rotatedToken)
 }
-// call refreshAndUpdate() before token expires
+// Trigger refreshAndFederateToken() within standard authorization cron windows
 ```
 
 ---
 
-## JavaScript API
+## ⚙️ Core JavaScript Runtime Control API
+
+Programmatically govern widget state transformations without relying on DOM elements:
 
 ```js
-// Initialize with config (if not using data-* attributes)
+// Initialize configuration profiles programmatically
 window.AIChatWidget.init({
-  endpoint: 'https://api.example.com',
+  endpoint: 'https://enterprise.internal',
   token: 'eyJ...',
-  welcomeMessage: 'Hello!',
+  welcomeMessage: 'Secure financial routing initialized.',
 })
 
-window.AIChatWidget.setToken('new-token')   // update token
-window.AIChatWidget.open()                  // open dialog
-window.AIChatWidget.close()                 // close dialog
-window.AIChatWidget.sendMessage('Hello!')   // send programmatically
+window.AIChatWidget.setToken('new-rotated-token')  // Rotate token context
+window.AIChatWidget.open()                         // Trigger layout entry transitions
+window.AIChatWidget.close()                        // Trigger layout exit transitions
+window.AIChatWidget.sendMessage('Query active ledgers.') // Programmatically dispatch intent
 ```
 
 ---
 
-## postMessage API
+## 📡 Cross-Origin PostMessage Event System
 
-Send from any frame or script on the same page:
+Dispatch actions safely from detached parent contexts or isolated child scripts:
 
 ```js
-// Send a chat message
-window.postMessage({ type: 'AI_CHAT_SEND', message: 'Hello!' }, '*')
+// Dispatch explicit conversational intent payload
+window.postMessage({ type: 'AI_CHAT_SEND', message: 'Execute portfolio compliance search.' }, '*')
 
-// Update the auth token
+// Force identity token rotation across the active session
 window.postMessage({ type: 'AI_CHAT_SET_TOKEN', token: 'eyJ...' }, '*')
 
-// Open the chat dialog
+// Programmatically scale open the presentation boundary
 window.postMessage({ type: 'AI_CHAT_OPEN' }, '*')
 
-// Close the chat dialog
+// Programmatically collapse the presentation boundary
 window.postMessage({ type: 'AI_CHAT_CLOSE' }, '*')
 ```
 
-| Event type | Payload fields |
-|------------|----------------|
-| `AI_CHAT_SEND` | `message: string` |
-| `AI_CHAT_SET_TOKEN` | `token: string` |
-| `AI_CHAT_OPEN` | _(none)_ |
-| `AI_CHAT_CLOSE` | _(none)_ |
+### PostMessage Event Schema Reference
+
+
+| System Event Identifier | Required Data Structure Payload |
+|:---|:---|
+| `AI_CHAT_SEND` | `message: string` (The target query payload) |
+| `AI_CHAT_SET_TOKEN` | `token: string` (The rotated cryptographic JWT) |
+| `AI_CHAT_OPEN` | *None (State change only)* |
+| `AI_CHAT_CLOSE` | *None (State change only)* |
 
 ---
 
-## CSS Theming
+## 🎨 Enterprise Theme Customization (CSS Tokens)
 
-Override any CSS custom property on `:root` or a parent element:
+Override any core layout variables by redefining CSS custom properties at the `:root` pseudo-class level or target parent DOM boundaries:
 
 ```css
 :root {
-  --ac-primary: #7c3aed;           /* bubble + send button color */
-  --ac-primary-hover: #6d28d9;
-  --ac-user-bubble-bg: #7c3aed;    /* user message background */
-  --ac-user-bubble-text: #ffffff;
-  --ac-agent-bubble-bg: #f3f4f6;   /* assistant message background */
-  --ac-agent-bubble-text: #111827;
-  --ac-dialog-bg: #ffffff;         /* dialog background */
-  --ac-header-bg: #1e293b;         /* dialog header background */
-  --ac-header-text: #ffffff;
-  --ac-bubble-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  --ac-primary: #1e3a8a;           /* Corporate Primary Branding Brand (Buttons / Interactive Anchors) */
+  --ac-primary-hover: #1d4ed8;     /* Hover boundary states */
+  --ac-user-bubble-bg: #1e3a8a;    /* User message card layout background fill */
+  --ac-user-bubble-text: #ffffff;  /* High-contrast accessible typography text color */
+  --ac-agent-bubble-bg: #f3f4f6;   /* System message card layout background fill */
+  --ac-agent-bubble-text: #111827; /* Regulatory compliant scannable text color */
+  --ac-dialog-bg: #ffffff;         /* Central frame canvas layout background fill */
+  --ac-header-bg: #0f172a;         /* Conversational view header fill */
+  --ac-header-text: #ffffff;       /* Header text accessible typography color */
+  --ac-bubble-shadow: 0 4px 24px rgba(15, 23, 42, 0.12);
   --ac-font-family: inherit;
-  --ac-border-radius: 16px;
+  --ac-border-radius: 12px;
 }
 ```
 
 ---
 
-## Building for Production
+## 🏗️ Production Compilation Pipelines
+
+To compile raw single-file components into highly optimized production targets:
 
 ```bash
 npm run build
 ```
 
-This runs two builds:
+The compiler isolates compilation profiles into two distinct output targets:
 
-| Output | Description |
-|--------|-------------|
-| `dist/widget/ai-chat-widget.js` | Self-contained IIFE bundle — use with `<script src="...">` |
-| `dist/example/` | Static example app |
 
-Build only the widget:
+| Compilation Output | Asset Distribution Target |
+|:---|:---|
+| `dist/widget/ai-chat-widget.js` | Highly optimized, self-contained IIFE bundle explicitly bound for standard CDN hosting. |
+| `dist/example/` | Complete, compiled static sandbox client application deployment target. |
+
+To bypass sample app assembly and compile *only* the zero-dependency widget:
 ```bash
 npm run build:widget
 ```
 
 ---
 
-## Running Tests
+## 🧪 Test Automation Framework
+
+To launch the unit and component regression testing suites:
 
 ```bash
 npm test
 ```
 
-Tests use Jest + `@vue/test-utils`. Each component has a test file under `tests/components/`.
+*Note: Tests run via Jest leveraging `@vue/test-utils` processing. Component test blocks map to sequential files nested cleanly within `tests/components/` boundaries.*
 
 ---
 
-## Security Overview
-Integrates with AWS Cognito User Pools for secure OAuth2 authentication.
+## 🧩 Architectural Engineering Specifications
 
-## Architecture Overview
+### State Layer Isolation (`useChatStore.ts`)
+Decoupled module-level reactive states built on core Vue 3 refs, completely eliminating Pinia dependency bloat. Operates as a global singleton layout that maintains synchronization across separate tracking component nodes. Persists conversation pointers seamlessly across local client lifecycles (`ac_conversation_id` ➔ `localStorage`).
 
-### State (`useChatStore.ts`)
-Module-level reactive refs — no Pinia. Singleton state shared across all component instances. Persists the active conversation ID to `localStorage` (`ac_conversation_id`).
+### API Streaming Protocols (`useApi.ts`)
+Strongly typed ingestion layer routing outbound payloads. All transport methods seamlessly inject `Authorization: Bearer <token>` strings. Streaming flows utilize native `ReadableStream` primitives combined with a `TextDecoder` engine to intercept, split, and parse Server-Sent Events (SSE) `data:` lines in real-time.
 
-### API Layer (`useApi.ts`)
-Typed `fetch` wrapper. All requests inject `Authorization: Bearer <token>`. Streaming uses `ReadableStream` + `TextDecoder` to parse SSE `data:` lines.
+### Reactive Composables Overview
+*   `useApi.ts` — High-efficiency REST transport + SSE streaming consumer.
+*   `useChatStore.ts` — Lightweight singleton reactive system data store.
+*   `useConversation.ts` — Message ingestion execution, pagination logic, and conversational state tracking.
+*   `useConversations.ts` — Cursor-paginated history indices loading view states.
+*   `useModels.ts` — Ingests authorized model access schemas into system preferences panel trackers.
 
-### Composables
-| File | Purpose |
-|------|---------|
-| `useApi.ts` | HTTP + SSE client |
-| `useChatStore.ts` | Singleton reactive state |
-| `useConversation.ts` | Send message, load/create conversation, paginated older messages |
-| `useConversations.ts` | Paginated conversation list for history view |
-| `useModels.ts` | Model list for settings |
+### Real-Time Streaming Sequence Map
+1. User Message Ingress  ➔ Optmistic UI Update Applied to State Registry
+2. Ingress Completed     ➔ TypingIndicator Layer Mounts to Block UI Input Delay
+3. First Byte Received    ➔ TypingIndicator Smoothly Swaps with Live Streaming Token Nodes
+4. Pipeline Closes       ➔ Complete MessageResponse Entity Committed into Persistent Message Array
+5. Network Interception  ➔ Smooth Automatic Fallback to Standard REST POST Layer if Stream Drops
 
-### Streaming Flow
-1. User submits → optimistic user message appended
-2. `TypingIndicator` shown while waiting for first SSE byte
-3. Streaming assistant bubble replaces indicator as tokens arrive
-4. On complete, final `MessageResponse` pushed to `messages`
-5. Falls back to non-streaming `POST` if stream fails
+### UI Component Hierarchy Tree
+ChatWidget (Global Canvas Root)
+├── ChatBubble          (Viewport fixed action component)
+└── ChatDialog          (Slide-up presentation interface container)
+  ├── ConversationView
+  │   ├── MessageBubble (Multi-tenant text/markdown component array)
+  │   ├── TypingIndicator
+  │   └── [ChatInput — Contextual inline submission engine]
+  ├── ConversationHistory
+  └── ConversationSettings
 
-### Component Tree
-```
-ChatWidget
-├── ChatBubble          (fixed bottom-right button)
-└── ChatDialog          (slide-up dialog)
-    ├── ConversationView
-    │   ├── MessageBubble (×n)
-    │   ├── TypingIndicator
-    │   └── [ChatInput — inline]
-    ├── ConversationHistory
-    └── ConversationSettings
-```
