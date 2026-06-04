@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeEach } from '@jest/globals'
+import { describe, it, expect, beforeEach, jest } from '@jest/globals'
 import ConversationView from '../../src/components/ConversationView.vue'
 import {
   messages,
@@ -23,6 +23,7 @@ const mockConv: ConversationResponse = {
   provider: 'openai',
   model: 'gpt-4',
   enabled_tools: [],
+  first_message: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 }

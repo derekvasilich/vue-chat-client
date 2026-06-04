@@ -12,6 +12,7 @@ const mockConv: ConversationResponse = {
   provider: 'openai',
   model: 'gpt-4',
   enabled_tools: ['web_search'],
+  first_message: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 }
