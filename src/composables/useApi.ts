@@ -12,6 +12,7 @@ import type {
   SpecSourceResponse,
   SpecSourceListResponse,
   DocumentUploadResponse,
+  DocumentStatusResponse,
 } from '../types/api'
 
 let _endpoint = import.meta.env.VITE_AGENT_API_ENDPOINT || 'http://localhost:8080'
@@ -132,6 +133,22 @@ export const api = {
 
   refreshSpecSource(id: string) {
     return request<void>(`/v1/spec-sources/${id}/refresh`, { method: 'POST' })
+  },
+
+  getDocumentStatus(object_key: string) {
+    return request<DocumentStatusResponse>(`/v1/documents/status?object_key=${encodeURIComponent(object_key)}`)
+  },
+
+  async *pollDocumentStatus(
+    object_key: string,
+    interval = 5000
+  ): AsyncGenerator<DocumentStatusResponse, void, unknown> {
+    while (true) {
+      const response = await api.getDocumentStatus(object_key)
+      yield response
+      if (response.status === 'READY' || response.status === 'ERROR') break
+      await new Promise((resolve) => setTimeout(resolve, interval))
+    }
   },
 
   getUploadUrl(file_name: string, file_type: string) {

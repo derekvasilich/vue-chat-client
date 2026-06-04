@@ -142,37 +142,41 @@ async function onFileSelected(event: Event) {
   if (!selectedFiles.length) return;
 
   const file = selectedFiles[0]; // Assuming single file upload; adjust if multiple files are allowed
-  const fileMessage = {
-    id: `file-${Date.now()}`,
-    conversation_id: currentConversation.value?.id ?? '',
-    role: 'user',
-    content: `📎 ${file.name}`,
-    tool_calls: null,
-    tool_call_id: null,
-    model_used: null,
-    token_count: null,
-    created_at: new Date().toISOString(),
-  }
 
   // Forward the selected files array straight to your S3 handling pipeline
   const { upload_url, object_key } = await api.getUploadUrl(file.name, file.type);
-// 2. Stream the file binary directly to S3 (FastAPI is bypassed entirely)
+
+  // 2. Stream the file binary directly to S3 (FastAPI is bypassed entirely)
   const s3Response = await fetch(upload_url, {
     method: 'PUT',
     headers: { 'Content-Type': file.type },
     body: file, // Assuming single file upload; adjust if multiple files are allowed
   });
 
-  if (s3Response.ok) {
-    console.log('File safely landed in S3! Processing will begin asynchronously.', object_key);
-  }
-  else {
-    console.error('Upload failed:', s3Response.statusText);
-  }
-  messages.value.push(fileMessage)
+  const attachment = (status: string) => `<attachment name="${encodeURIComponent(file.name)}" object-key="${encodeURIComponent(object_key)}" status="${status}" />`;
 
-  // Clear the input value so the user can upload the exact same file name again later if needed
-  target.value = '';
+  if (!s3Response.ok) {
+    sendMessage(`Failed to upload ${attachment('ERROR')}. Please try again.`);
+    // Clear the input value so the user can upload the exact same file name again later if needed
+    target.value = '';
+  }
+  try {
+    for await (const status of api.pollDocumentStatus(object_key)) {
+      if (status.status === 'READY') {
+        sendMessage(`Successfully uploaded ${attachment('READY')}! You can now ask questions about its content.`);
+        break
+      }
+      if (status.status === 'ERROR') {
+        sendMessage(`Failed to process ${attachment('ERROR')}. Please try again.`);
+        break
+      }
+    }
+  } catch (e) {
+    sendMessage(`Failed to process ${attachment('ERROR')}. Please try again.`);
+  } finally {
+    // Clear the input value so the user can upload the exact same file name again later if needed
+    target.value = '';
+  }
 }
 </script>
 

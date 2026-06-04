@@ -75,7 +75,7 @@ export interface ConversationConfigUpdate {
   enabled_specs?: string[] | null
 }
 
-export const AVAILABLE_TOOLS = ['calculator', 'web_search', 'openapi_discovery'] as const
+export const AVAILABLE_TOOLS = ['calculator', 'web_search', 'openapi_discovery', 'read_attachment_content'] as const
 export type AvailableTool = (typeof AVAILABLE_TOOLS)[number]
 
 export interface ModelResponse {
@@ -155,4 +155,18 @@ export interface WidgetConfig {
   welcomeMessage: string
 }
 
-export interface DocumentUploadResponse { upload_url: string; object_key: string }
+export interface DocumentUploadResponse { 
+  upload_url: string; 
+  object_key: string;
+}
+export interface DocumentStatusResponse { 
+  object_key: string;
+  user_id: string;
+  status: 'PENDING' | 'PROCESSING' | 'ERROR' | 'READY'; 
+  etag: string;
+  extracted_data?: string;
+  metadata?: Record<string, unknown>;
+  last_fetched_at?: string;
+  created_at: string;
+  updated_at: string;
+}
