@@ -82,11 +82,6 @@ export function useConversation() {
     }
     messages.value.push(optimisticMsg)
 
-    // Auto-title on first message (fire-and-forget)
-    if (isFirst) {
-      autoTitle(convId, truncateTitle(content))
-    }
-
     isStreaming.value = true
     streamingContent.value = ''
 
@@ -158,14 +153,4 @@ function truncateTitle(text: string): string {
   const cut = text.slice(0, 60)
   const lastSpace = cut.lastIndexOf(' ')
   return lastSpace > 0 ? cut.slice(0, lastSpace) : cut
-}
-
-function autoTitle(convId: string, title: string): void {
-  // Fire-and-forget: attempt PATCH on the conversation title endpoint
-  // (not in spec but common; silently ignore if unsupported)
-  fetch(`/v1/conversations/${convId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
-  }).catch(() => {})
 }
